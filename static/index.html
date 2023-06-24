@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wardrobe file upload</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <h2>Wardrobe upload</h2>
+                <div class="mb-3">
+                    <label for="downloadFileInput" class="form-label">Choose file for upload</label>
+                    <input class="form-control" type="file" id="uploadFileInput">
+                </div>
+                <div class="mb-3">
+                    <label for="secretWordInput" class="form-label">Secret word</label>
+                    <input type="text" class="form-control" id="secretWordInput" placeholder="secret word">
+                </div>  
+                <input type="button" class="btn btn-info" id="uploadFileButton" value="Upload file">
+                <hr>
+                <div class="mb-3">
+                    <h3>File link</h3>
+                    <a href="" id="fileLink"></a>
+                </div>
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+    <script>
+        let fileLink = document.getElementById("fileLink");
+        let uploadFileInput = document.getElementById("uploadFileInput");
+        let uploadFileButton = document.getElementById("uploadFileButton");
+        let secretWordInput = document.getElementById("secretWordInput");
+        uploadFileButton.addEventListener("click", uploadFile);
+
+        function uploadFile(){
+            if (uploadFileInput.files.length === 0) {
+                alert("No file selected");
+                return
+            }
+            if (secretWordInput.value.trim() == "") {
+                alert("Secret word is empty");
+                return;
+            }
+            let file = uploadFileInput.files[0];
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/", true);
+            xhr.responseType="json";
+            xhr.setRequestHeader("x-secret-word", secretWordInput.value);
+            let formData = new FormData();
+            formData.append("file", file);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status == 200) {
+                        fileLink.setAttribute("href", xhr.response.link);
+                        fileLink.innerText = xhr.response.link;
+                    }
+                    else {
+                        if (xhr.response.detail !== null && xhr.response.detail !== undefined){
+                            alert(xhr.response.detail);
+                            return
+                        }
+                        alert("Error occured! Read logs, comrade!");
+                        console.log(xhr.status);
+                        console.log(xhr.response);
+                    }
+                }};
+            xhr.send(formData);
+        }
+    </script>
+    <script src="/static/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+</html>
