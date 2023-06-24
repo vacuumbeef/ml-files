@@ -1,9 +1,9 @@
-# Warpeve file uploader
-## Зависимости
+# Motherland file uploader
+## Dependencies
 - Python 3.7+
 - python-virtualenv
 
-## Установка
+## Installation
 Для установки виртуального окружения и всех зависимостей нужно запустить скрипт install.sh.
 
 ## Первый запуск
